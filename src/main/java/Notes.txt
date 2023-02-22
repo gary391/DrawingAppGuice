@@ -1,0 +1,64 @@
+youtube : https://www.youtube.com/watch?v=KUQI6m0Jj5I&list=PLp0ed20U4R4jknb4xYdhx3yJn5RhWECxn&index=2
+
+Internal Implementation of DrawingApp
+
+Interface DrawShape
+draw(); --> Method
+
+We can implement this interface in a class called DrawSquare
+class DrawSquare  ---> Concrete Class
+draw()
+{//code}
+
+Now, we have a new requirements to draw Circle.
+We can use the same interface (draw shape) and implement a separate class
+with the logic to draw a circle.
+
+Q: Why do we need google guice ?
+=========================================================================================================
+Consider a simple application to draw shapes
+
+1. Application just draws Square for now.
+2. In future, it can be enhanced to draw more shapes.
+
+Interface DrawShape
+draw();
+
+    class DrawSquare
+    draw()
+    {//code}
+
+    class DrawCircle
+    draw()
+    {//code}
+=========================================================================================================
+Q: How Guice builds object?
+
+When say, TypeA is requested, it does two things:
+
+1. Consults binding (AppModule ) to resolve the concrete type
+2. Build object of the type
+
+Note there is two ways for requesting typeA using Google Guice
+
+1. Directly asking Google guice, for TypeA
+    a. injector.getInstance(TypeA.class)
+2. Ask for some other Type i.e.,
+    a. injector.getInstance(TypeB.class) but internally to instantiate TypeB, TypeA is needed as its
+       dependency, thus TypeA is requested.
+
+
+TypeA can be an interface or concrete class:
+
+// This will provide mapping of interface to concrete class so that google guice can produce object
+1. If TypeA is an interface, then, we must have a binding for it:
+    bind(TypeA.class).to(SomeConcreteImplOfTypeA.class)
+
+2. If TypeA is a concrete impl, then,
+
+case1:
+    No bindings - As there are no binding and since TypeA is already a concrete implementation,
+    google guice will create the object of the class TypeA.
+
+case2: (TypeA is a concrete implementation)
+    bind(TypeA.class).to(SubClassOfTypeA.class)
